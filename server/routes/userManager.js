@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../model/database");
 
 
-const SECRET = "secret hai bhai";
+const SECRET = process.env.SECRET;
 const userRouter = express.Router();
 
 const User = db.users;
