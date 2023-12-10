@@ -15,6 +15,7 @@ try{
 
 //importing the routes
 const userRouter = require('./routes/userManager');
+const cartRouter = require("./routes/cartManager");
 //setting up your port
 const PORT = process.env.PORT || 3000;
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 // db.sequelize.sync({ alter: true });
 
 app.use('/api/v1', userRouter);
+app.use('/api/v1', cartRouter);
 
 app.get('*', (req, res) => res.send("404! NOT FOUND"));
 
