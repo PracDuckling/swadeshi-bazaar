@@ -32,11 +32,9 @@ const userModel = (sequelize) => {
         },
         user_middle_name: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         user_last_name: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
     });
 };
