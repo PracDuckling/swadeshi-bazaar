@@ -4,7 +4,7 @@ const { Sequelize } = require("sequelize");
 
 const db = {};
 
-const sequelize = new Sequelize("userManager", "postgres", "root", {
+const sequelize = new Sequelize("swadeshi-bazaar", "postgres", "root", {
     host: "localhost",
     dialect: "postgres",
 });
