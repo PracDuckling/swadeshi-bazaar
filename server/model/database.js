@@ -21,6 +21,10 @@ try {
     db.sellers = require("./SellerModel")(sequelize);
     db.bankDetails = require('./BankDetailModel')(sequelize);
     db.addresses = require('./AddressModel')(sequelize);
+    db.products = require('./ProductModel')(sequelize);
+    db.productCategories = require('./ProductCategoryModel')(sequelize);
+    db.productDimensions = require('./ProductDimensionModel')(sequelize);
+    db.reviews = require('./ReviewModel')(sequelize);
 } catch (error) {
     console.error("Unable to connect to the database:", error);
 }

@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// db.sequelize.sync({ alter: true });
+db.sequelize.sync({alter: true});
 
 app.use('/api/v1', userRouter);
 
@@ -34,3 +34,6 @@ app.get('*', (req, res) => res.send("404! NOT FOUND"));
 
 //listening to server connection
 app.listen(PORT, () => console.log(`Server is connected on ${PORT}`));
+
+//TODO: Transaction Manager and its models
+//TODO: CartManager and its models
