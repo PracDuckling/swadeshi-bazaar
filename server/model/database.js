@@ -23,6 +23,7 @@ try {
     db.bankDetails = require('./BankDetailModel')(sequelize);
     db.addresses = require('./AddressModel')(sequelize);
     db.products = require('./ProductModel')(sequelize);
+    db.images = require('./ImageModel')(sequelize);
     db.productCategories = require('./ProductCategoryModel')(sequelize);
     db.productDimensions = require('./ProductDimensionModel')(sequelize);
     db.reviews = require('./ReviewModel')(sequelize);

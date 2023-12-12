@@ -37,5 +37,6 @@ app.get('*', (req, res) => res.send("404! NOT FOUND"));
 //listening to server connection
 app.listen(PORT, () => console.log(`Server is connected on ${PORT}`));
 
+//TODO: work on inventory manager
 //TODO: Transaction Manager and its models
 //TODO: CartManager and its models

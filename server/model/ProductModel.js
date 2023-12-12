@@ -64,19 +64,6 @@ const productModel = (sequelize) => {
             allowNull: false,
             defaultValue: 5
         },
-        image_data:{
-            type: DataTypes.BLOB('long'),
-            allowNull: false,
-        },
-        image_type:{
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        image_name:{
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-
     });
 };
 
