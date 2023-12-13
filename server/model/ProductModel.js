@@ -11,18 +11,15 @@ const productModel = (sequelize) => {
         },
         category_id: {
             type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "productCategories",
-                key: "category_id",
-            },
+            defaultValue: DataTypes.UUIDV4,
+            allowNull: false
         },
         seller_id: {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: "sellers", 
-                key: "seller_id", 
+                model: "sellers",
+                key: "seller_id",
             },
         },
         name: {
@@ -36,22 +33,22 @@ const productModel = (sequelize) => {
         rating: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 0
+            defaultValue: 0,
         },
         isAvailable: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: true
+            defaultValue: true,
         },
         price: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 100
+            defaultValue: 100,
         },
         description: {
             type: DataTypes.TEXT,
             allowNull: false,
-            defaultValue: "No description"
+            defaultValue: "No description",
         },
         expiry_date: {
             type: DataTypes.DATE,
@@ -62,7 +59,7 @@ const productModel = (sequelize) => {
         available_quantity: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 5
+            defaultValue: 1,
         },
     });
 };

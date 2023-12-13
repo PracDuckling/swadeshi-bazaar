@@ -17,18 +17,14 @@ const imageModel = (sequelize) => {
                 key: "product_id",
             },
         },
-        image_data: {
-            type: DataTypes.BLOB("long"),
-            allowNull: false,
-        },
-        image_type: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
         image_name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        image_url: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }
     });
 };
 

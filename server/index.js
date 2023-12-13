@@ -16,6 +16,8 @@ try{
 //importing the routes
 const userRouter = require('./routes/userManager');
 const cartRouter = require("./routes/cartManager");
+const inventoryRouter = require('./routes/inventoryManager');
+
 //setting up your port
 const PORT = process.env.PORT || 3000;
 
@@ -23,14 +25,14 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 //middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb',  extended: true }));
 app.use(cookieParser());
 
-db.sequelize.sync({alter: true});
 
 app.use('/api/v1', userRouter);
 app.use('/api/v1', cartRouter);
+app.use('/api/v1/', inventoryRouter);
 
 app.get('*', (req, res) => res.send("404! NOT FOUND"));
 

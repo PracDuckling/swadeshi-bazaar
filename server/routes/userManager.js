@@ -230,7 +230,8 @@ userRouter.post("/seller/create", async (req, res) => {
             bond,
         };
 
-        await Seller.create(seller);
+        result = await Seller.create(seller);
+        const seller_id = result.seller_id;
 
         //add the address to the address table
         const saveAddress = {
@@ -248,7 +249,7 @@ userRouter.post("/seller/create", async (req, res) => {
         //save data to address table
         await Address.create(saveAddress);
 
-        const token = jwt.sign({ user_id, email }, SECRET, {
+        const token = jwt.sign({ user_id, seller_id, email }, SECRET, {
             expiresIn: "1d",
         });
 

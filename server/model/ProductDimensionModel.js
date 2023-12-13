@@ -19,27 +19,21 @@ const productDimensionModel = (sequelize) => {
         },
         size: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         color: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         height: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         width: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         length: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         weight: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
     });
 };
