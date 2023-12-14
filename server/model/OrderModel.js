@@ -37,7 +37,7 @@ const orderModel = (sequelize) => {
         tracking_id: {
             type: DataTypes.STRING,
             allowNull: false,
-
+            defaultValue: "Some random string",
         },
     });
 };

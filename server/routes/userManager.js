@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const db = require("../model/database");
+const validateAuthToken = require('../middleware/validateAuthToken');
 
 
 const SECRET = process.env.SECRET;
@@ -12,8 +13,8 @@ const User = db.users;
 const Seller = db.sellers;
 const Address = db.addresses;
 
-userRouter.get("/user/profile", async (req, res) => {
-    const { user_id } = req.body;
+userRouter.get("/user/profile", validateAuthToken ,async (req, res) => {
+    const user_id = req.user_id;
 
     try {
         const result = await User.findAll({
@@ -45,8 +46,8 @@ userRouter.get("/user/profile", async (req, res) => {
     }
 });
 
-userRouter.get("/seller/profile", async (req, res) => {
-    const { user_id } = req.body;
+userRouter.get("/seller/profile", validateAuthToken,async (req, res) => {
+    const user_id = req.user_id;
 
     try {
         const result = await User.findAll({
@@ -537,5 +538,54 @@ userRouter.put("/seller/update", async (req, res) => {
     }
 
 });
+
+//send all addresses of the user with the user_id in req object
+userRouter.get('/user/address', validateAuthToken, async (req, res) => {
+    const user_id = req.user_id;
+
+    try{
+        let result = await Address.findAll({
+            where: {
+                user_id
+            }
+        });
+
+        return res.status(200).json({ message: "Addresses found", result });
+
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "something went wrong", error });
+    }
+
+});
+
+//add new address
+userRouter.post("/user/address/create", validateAuthToken, async (req, res) => {
+    const user_id = req.user_id;
+    const { phone, address } = req.body;
+
+    try{
+        const saveAddress = {
+            user_id,
+            phone,
+            is_default: false,
+            PIN_code: address.PIN_code,
+            city: address.city,
+            state: address.state,
+            country: address.country,
+            street_add_1: address.street_add_1,
+            street_add_2: address.street_add_2
+        };
+
+        await Address.create(saveAddress);
+
+        return res.status(201).json({ message: "Address successfully created" });
+
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ message: "something went wrong", error });
+    }
+});
+
 
 module.exports = userRouter;

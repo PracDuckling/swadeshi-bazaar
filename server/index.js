@@ -17,6 +17,7 @@ try{
 const userRouter = require('./routes/userManager');
 const cartRouter = require("./routes/cartManager");
 const inventoryRouter = require('./routes/inventoryManager');
+const orderRouter = require('./routes/orderManager');
 
 //setting up your port
 const PORT = process.env.PORT || 3000;
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use('/api/v1', userRouter);
 app.use('/api/v1', cartRouter);
 app.use('/api/v1/', inventoryRouter);
+app.use('/api/v1/', orderRouter);
 
 app.get('*', (req, res) => res.send("404! NOT FOUND"));
 

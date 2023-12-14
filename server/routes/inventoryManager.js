@@ -64,7 +64,6 @@ inventoryRouter.post("/product/image/upload", upload, async (req, res) => {
 });
 
 //create product
-//TODO: Test this new functionality, I am trying to maintain uniquiness of product category
 inventoryRouter.post("/product/create", validateAuthToken, async (req, res) => {
     const seller_id = req.seller_id;
     if (!seller_id) {

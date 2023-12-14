@@ -27,6 +27,8 @@ try {
     db.productCategories = require('./ProductCategoryModel')(sequelize);
     db.productDimensions = require('./ProductDimensionModel')(sequelize);
     db.reviews = require('./ReviewModel')(sequelize);
+    db.orders = require('./OrderModel')(sequelize);
+    db.lineItems = require('./LineItemModel')(sequelize);
 } catch (error) {
     console.error("Unable to connect to the database:", error);
 }
