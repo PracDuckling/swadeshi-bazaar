@@ -250,7 +250,7 @@ userRouter.post("/seller/create", async (req, res) => {
         await Address.create(saveAddress);
 
         const token = jwt.sign({ user_id, seller_id, email }, SECRET, {
-            expiresIn: "1d",
+            expiresIn: "10d",
         });
 
         const data = { email, user_id };

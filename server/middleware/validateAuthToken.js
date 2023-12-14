@@ -15,7 +15,7 @@ const validateAuthToken = (req, res, next) => {
             req.user_id = user.user_id;
             req.email = user.email;
             if(user.seller_id)
-                req.seller_id = seller_id;
+                req.seller_id = user.seller_id;
         } catch (error) {
             return res
                 .status(401)

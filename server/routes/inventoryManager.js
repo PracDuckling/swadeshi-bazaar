@@ -64,43 +64,57 @@ inventoryRouter.post("/product/image/upload", upload, async (req, res) => {
 });
 
 //create product
-inventoryRouter.post("/product/create", validateAuthToken ,async (req, res) => {
+//TODO: Test this new functionality, I am trying to maintain uniquiness of product category
+inventoryRouter.post("/product/create", validateAuthToken, async (req, res) => {
     const seller_id = req.seller_id;
-    if(!seller_id){
+    if (!seller_id) {
         //access denied, you must be a seller to register a product
         res.status(403).json("Access Denied");
     }
 
     const {
-
-       productDetails,
-       productDimensions,
-       productCategory,
-       productImages
-
+        productDetails,
+        productDimensions,
+        productCategory,
+        productImages,
     } = req.body;
-    /*
-        productModel and productCategoryModel have a many to many relationship
-        what we can do here is generate category_id and create a product
-        
-        From generated product we get product_id and then category_id and using this
-        we create new entry in productCategoryModel and productDimensionModel and imageModel.
-    */
 
     try {
-        const result = await Product.create({
-            ...productDetails,
-            seller_id,
+        
+        let result = await ProductCategory.findAll({
+            where: {
+                product_category_1: productCategory.product_category_1,
+                product_category_2: productCategory.product_category_2,
+            },
         });
+        
+        //extract category_id from result
+        // console.log(result);
+        let category_id = result[0].dataValues.category_id;
+        let product_id;
+        if (!category_id) {
+            result = await Product.create({
+                ...productDetails,
+                seller_id,
+            });
+            category_id = result.category_id;
+            product_id = result.product_id;
+            await ProductCategory.create({
+                category_id,
+                product_id,
+                ...productCategory,
+            });
+        }else{
+            result = await Product.create({
+                ...productDetails,
+                seller_id,
+                category_id,
+            });
+            product_id = result.product_id;
+        }
+        
 
-        const category_id = result.category_id;
-        const product_id = result.product_id;
-
-        await ProductCategory.create({
-            category_id,
-            product_id,
-            ...productCategory,
-        });
+        
 
         await ProductDimensions.create({
             product_id,
@@ -112,26 +126,36 @@ inventoryRouter.post("/product/create", validateAuthToken ,async (req, res) => {
             ...productImages,
         });
 
-        return res.status(201).json({ message: "Product created successfully" });
-
+        return res
+            .status(201)
+            .json({ message: "Product created successfully" });
     } catch (error) {
         console.log("product creation error", error);
         return res.status(500).json({ message: "Internal Server Error" });
     }
-
-
 });
 
 //view product
 inventoryRouter.get("/product/:product_id", async (req, res) => {
     const { product_id } = req.params;
-
+    const result = {};
     try {
-        const result = await Product.findOne({
+        result.productDetails = await Product.findOne({
             where: {
                 product_id,
             },
         });
+        result.productCategory = await ProductCategory.findOne({
+            where: {
+                product_id,
+            },
+        });
+        result.productDimensions = await ProductDimensions.findOne({
+            where: {
+                product_id,
+            },
+        });
+        result.productImages = await Image.findAll({ where: { product_id } });
 
         if (!result) {
             return res.status(404).json({ message: "Product not found" });
@@ -167,21 +191,49 @@ inventoryRouter.put("/product/:product_id", async (req, res) => {
     }
 });
 
-
 //delete product
 inventoryRouter.delete("/product/:product_id", async (req, res) => {
     const { product_id } = req.params;
 
     try {
-        const result = await Product.destroy({
+        //check if product exists or not
+        let result = await Product.findOne({
             where: {
                 product_id,
             },
         });
 
-        if (!result) {
+        if (result === null) {
             return res.status(404).json({ message: "Product not found" });
         }
+
+        //delete product images
+
+        await Image.destroy({
+            where: {
+                product_id,
+            },
+        });
+
+        //delete product dimensions
+        await ProductDimensions.destroy({
+            where: {
+                product_id,
+            },
+        });
+
+        //delete product category
+        await ProductCategory.destroy({
+            where: {
+                product_id,
+            },
+        });
+
+        await Product.destroy({
+            where: {
+                product_id,
+            },
+        });
 
         return res.status(200).json({ message: "Product deleted" });
     } catch (error) {
@@ -223,9 +275,8 @@ inventoryRouter.get("/products/:category_id", async (req, res) => {
     }
 });
 
-
 //send  category_id and product_category_1, product_category_2 with the description to the frontend
-inventoryRouter.get('/categories', async (req, res) => {
+inventoryRouter.get("/categories", async (req, res) => {
     try {
         const result = await ProductCategory.findAll();
         return res.status(200).json({ message: "Categories found", result });
@@ -236,6 +287,5 @@ inventoryRouter.get('/categories', async (req, res) => {
 });
 
 //end
-
 
 module.exports = inventoryRouter;
