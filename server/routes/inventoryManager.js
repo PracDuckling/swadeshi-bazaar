@@ -80,7 +80,7 @@ inventoryRouter.post("/product/create", validateAuthToken, async (req, res) => {
 
     try {
         
-        let result = await ProductCategory.findAll({
+        let result = await ProductCategory.findOne({
             where: {
                 product_category_1: productCategory.product_category_1,
                 product_category_2: productCategory.product_category_2,
@@ -88,8 +88,9 @@ inventoryRouter.post("/product/create", validateAuthToken, async (req, res) => {
         });
         
         //extract category_id from result
-        // console.log(result);
-        let category_id = result[0].dataValues.category_id;
+        
+        let category_id = undefined;
+        if(result) category_id = result.dataValues.category_id;
         let product_id;
         if (!category_id) {
             result = await Product.create({

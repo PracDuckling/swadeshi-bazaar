@@ -29,6 +29,7 @@ try {
     db.reviews = require('./ReviewModel')(sequelize);
     db.orders = require('./OrderModel')(sequelize);
     db.lineItems = require('./LineItemModel')(sequelize);
+    db.sellerOrders = require('./sellerOrderModel')(sequelize);
 } catch (error) {
     console.error("Unable to connect to the database:", error);
 }

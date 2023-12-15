@@ -8,7 +8,7 @@ const db = require('./model/database');
 
 //sync all models
 try{
-    db.sequelize.sync();
+    db.sequelize.sync({force: true});
 }catch(error){
     console.log("DB sync error: ", error);
 }
@@ -40,7 +40,3 @@ app.get('*', (req, res) => res.send("404! NOT FOUND"));
 
 //listening to server connection
 app.listen(PORT, () => console.log(`Server is connected on ${PORT}`));
-
-//TODO: work on inventory manager
-//TODO: Transaction Manager and its models
-//TODO: CartManager and its models
