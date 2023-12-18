@@ -8,7 +8,7 @@ const db = require('./model/database');
 
 //sync all models
 try{
-    db.sequelize.sync({force: true});
+    db.sequelize.sync();
 }catch(error){
     console.log("DB sync error: ", error);
 }
