@@ -48,18 +48,26 @@ orderRouter.post("/order/create", validateAuthToken, async (req, res) => {
             
             //for every product get the seller_id and in the sellerOrder table create a new entry
             const seller_id = item.seller_id;
-            await SellerOrder.create({
-                seller_id,
-                order_id,
-                address_id,
-            });
-
-            product.available_quantity = item.available_quantity;
+            let result = await SellerOrder.findOne(
+                {
+                    where: {
+                        seller_id,
+                        order_id,
+                    },
+                }
+            )
+            if(result === null) {
+                await SellerOrder.create({
+                    seller_id,
+                    order_id,
+                    address_id,
+                });
+            }
             
-            let netQuantity = (parseInt(product.available_quantity) - parseInt(product.quantity)) < 0 ? 0 : (parseInt(product.available_quantity) - parseInt(product.quantity));
+            let netQuantity = (parseInt(item.available_quantity) - parseInt(product.quantity)) < 0 ? 0 : (parseInt(item.available_quantity) - parseInt(product.quantity));
             
-            netQuantity = netQuantity.toString();
             const isAvailable = netQuantity > 0 ? true : false;
+            netQuantity = netQuantity.toString();
             await Product.update({
                 isAvailable,
                 available_quantity: netQuantity
@@ -166,7 +174,7 @@ orderRouter.get("/user/orders", validateAuthToken, async (req, res) => {
     }
 });
 
-//TODO: test the sellerOrder functionality
+//TODO: test the sellerOrder functionality 
 
 orderRouter.get("/seller/orders", validateAuthToken, async (req, res) => {
     if(!req.seller_id){
@@ -175,14 +183,20 @@ orderRouter.get("/seller/orders", validateAuthToken, async (req, res) => {
     const seller_id = req.seller_id;
     try {
         //get all orders
-        const orders = await SellerOrder.findAll({
+        const sales = await SellerOrder.findAll({
             where: {
                 seller_id,
             },
         });
         let orderList = [];
-        for(order of orders) {
+        for(sale of sales) {
             const orderDetails = {};
+            const order = await Order.findOne({
+                where: {
+                    order_id: sale.order_id,
+                },
+            
+            });
             //add generic order details
             orderDetails.orderNumber = order.order_id;
             orderDetails.orderDate = order.order_date;
@@ -198,36 +212,41 @@ orderRouter.get("/seller/orders", validateAuthToken, async (req, res) => {
             orderDetails.address = address;
 
             //fetch products
-            const products = [];
+            
             let total = 0;
+            const products = [];
             const lineItems = await LineItem.findAll({
                 where: {
                     order_id: order.order_id,
                 },
             });
-            for(lineItem of lineItems) {
-                
+
+           //for every lineItem check if the product is made by the seller with seller_id
+           //if yes then add its details to product information elase skip it
+
+           for(lineItem of lineItems) { 
                 const product = await Product.findOne({
                     where: {
+                        product_id: lineItem.product_id,
                         seller_id,
                     },
                 });
-                const product_id = product.dataValues.product_id;
-                const product_image = await Image.findOne({
-                    where: {
-                        product_id,
-                    },
-                });
-
-                //add product details
-                const temp = {
-                    product_name: product.dataValues.name,
-                    product_image: product_image.dataValues.image_url,
-                    product_price: product.dataValues.price,
-                    quantity: lineItem.quantity,
+                if(product){
+                    const product_image = await Image.findOne({
+                        where: {
+                            product_id: lineItem.product_id,
+                        },
+                    });
+                    //add product details
+                    const temp = {
+                        product_name: product.dataValues.name,
+                        product_image: product_image.dataValues.image_url,
+                        product_price: product.dataValues.price,
+                        quantity: lineItem.quantity,
+                    }
+                    total += parseFloat(product.price) * parseFloat(lineItem.quantity);
+                    products.push(temp);
                 }
-                total += parseFloat(product.price) * parseFloat(lineItem.quantity);
-                products.push(temp);
             }
             //add order total
             orderDetails.products = products;
